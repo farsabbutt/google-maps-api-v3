@@ -1,0 +1,32 @@
+//PHP START
+<?php
+// Storing the formatted address in a variable "$address"
+$address = "1600 Amphitheatre Parkway, Mountain View, CA";
+
+// Next we need to replace the spaces of the address with a "+" sign
+$address = str_replace(" ", "+", $address);
+
+// Setting Geocoding URL to which we need to send an API Call and appending the address
+
+$jsonURL = "http://maps.googleapis.com/maps/api/geocode/json?address=".$address."&amp;sensor=false"; 
+
+// Next initiating cURL 
+$geocurl = curl_init();
+
+//Next setting cURL options/parameters
+curl_setopt($geocurl, CURLOPT_URL, $jsonURL);
+curl_setopt($geocurl, CURLOPT_HEADER, 0);
+curl_setopt($geocurl, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+curl_setopt($geocurl, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt($geocurl, CURLOPT_RETURNTRANSFER, 1);
+
+// Executing cURL call and storing returned data into a variable
+$data = curl_exec($geocurl);
+
+// The returned result is in json format, we need to decode json
+$data = json_decode($data);
+
+// After decoding, we can now access latitude numeric value and longitude numeric value as:
+$latitude = $data->results[0]->geometry->location->lat;
+$longitude = $data->results[0]->geometry->location->lng;
+?>
